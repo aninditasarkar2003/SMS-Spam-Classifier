@@ -1,25 +1,36 @@
+import os
+import nltk
 import streamlit as st
 import pickle
 import string
-import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 
-# Download necessary NLTK datap
-nltk.download('punkt')
-nltk.download('stopwords')
+# Define the path for nltk_data
+nltk_data_dir = os.path.join(os.getcwd(), "nltk_data")
+
+# Create the directory if it doesn't exist
+if not os.path.exists(nltk_data_dir):
+    os.makedirs(nltk_data_dir)
+
+# Add the nltk_data directory to NLTK's search paths
+nltk.data.path.append(nltk_data_dir)
+
+# Download necessary NLTK resources
+nltk.download('punkt', download_dir=nltk_data_dir)
+nltk.download('stopwords', download_dir=nltk_data_dir)
 
 # Preprocessing function
 def transform_text(text):
     ps = PorterStemmer()
     text = text.lower()
     text = word_tokenize(text)
-
+    
     text = [i for i in text if i.isalnum()]
     text = [i for i in text if i not in stopwords.words('english')]
     text = [ps.stem(i) for i in text]
-
+    
     return " ".join(text)
 
 # Load the saved model and vectorizer
