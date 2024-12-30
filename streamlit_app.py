@@ -1,68 +1,51 @@
-# Import necessary libraries
-import streamlit as st
 import pickle
 import string
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
-import os
 
-# Set NLTK Data Path
-nltk_data_dir = os.path.join(os.getcwd(), 'nltk_data')
+# Download NLTK data (only once, as this is required for tokenization and stopwords)
+nltk.download('punkt')
+nltk.download('stopwords')
 
-# Create the directory if it doesn't exist
-if not os.path.exists(nltk_data_dir):
-    os.makedirs(nltk_data_dir)
-
-# Add the directory to NLTK data path
-nltk.data.path.append(nltk_data_dir)
-
-# Download necessary NLTK resources (punkt, stopwords)
-nltk.download('punkt', download_dir=nltk_data_dir)
-nltk.download('stopwords', download_dir=nltk_data_dir)
-
-# Define the text preprocessing function
+# Preprocessing function
 def transform_text(text):
+    stop_words = set(stopwords.words('english'))  # Load stopwords once
     ps = PorterStemmer()
-    text = text.lower()  # Convert to lowercase
-    text = word_tokenize(text)  # Tokenize the text (split it into words)
+    text = text.lower()
+    text = word_tokenize(text)
 
     # Remove non-alphanumeric tokens and stopwords
-    text = [word for word in text if word.isalnum()]  # Remove non-alphanumeric characters
-    text = [word for word in text if word not in stopwords.words('english')]  # Remove stopwords
+    text = [i for i in text if i.isalnum()]
+    text = [i for i in text if i not in stop_words]
 
-    # Stem the words (e.g., "running" becomes "run")
-    text = [ps.stem(word) for word in text]
+    # Apply stemming
+    text = [ps.stem(i) for i in text]
 
-    return " ".join(text)  # Return the processed text as a string
+    return " ".join(text)
 
-# Load the saved model and vectorizer
+# Step 1: Load the trained model and vectorizer
 with open('model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
 with open('vectorizer.pkl', 'rb') as vectorizer_file:
     tfidf = pickle.load(vectorizer_file)
 
-# Streamlit UI setup
-st.title("SMS/Email Spam Classifier")
+# Example SMS input
+input_sms = "Congratulations! You've won a free gift!"
 
-# Text input from user
-input_sms = st.text_area("Enter the message")
+# Step 2: Preprocess the input text
+transformed_sms = transform_text(input_sms)
 
-# When the Predict button is pressed
-if st.button('Predict'):
-    # Preprocess the input
-    transformed_sms = transform_text(input_sms)
+# Step 3: Vectorize the text using the loaded vectorizer
+vector_input = tfidf.transform([transformed_sms])
 
-    # Vectorize the input text
-    vector_input = tfidf.transform([transformed_sms])
+# Step 4: Make predictions using the loaded model
+result = model.predict(vector_input)[0]
 
-    # Make the prediction
-    result = model.predict(vector_input)[0]
-
-    # Display the result
-    if result == 1:
-        st.header("Spam")
-    else:
-        st.header("Not Spam")
+# Step 5: Display the result
+if result == 1:
+    print("Spam")
+else:
+    print("Not Spam")
