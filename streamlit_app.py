@@ -1,11 +1,14 @@
+# Import necessary libraries
 import streamlit as st
 import pickle
 import string
-
 import nltk
-import os
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
 
-# Set the NLTK data path (for cloud environments, if needed)
+# Set NLTK Data Path and Download Punkt Tokenizer
+import os
 nltk_data_dir = os.path.join(os.getcwd(), 'nltk_data')
 
 # Create the directory if it doesn't exist
@@ -15,15 +18,12 @@ if not os.path.exists(nltk_data_dir):
 # Add the directory to NLTK data path
 nltk.data.path.append(nltk_data_dir)
 
-# Download the 'punkt' tokenizer (the resource that is missing)
+# Download the 'punkt' tokenizer
 nltk.download('punkt', download_dir=nltk_data_dir)
 
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem import PorterStemmer
-
+# Your other code follows...
 # Download necessary NLTK datap
-nltk.download('punkt')
+
 nltk.download('stopwords')
 
 # Preprocessing function
