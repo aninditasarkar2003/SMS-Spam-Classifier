@@ -11,12 +11,16 @@ nltk.download('stopwords')
 
 # Preprocessing function
 def transform_text(text):
+    stop_words = set(stopwords.words('english'))  # Load stopwords once
     ps = PorterStemmer()
     text = text.lower()
     text = word_tokenize(text)
 
+    # Remove non-alphanumeric tokens and stopwords
     text = [i for i in text if i.isalnum()]
-    text = [i for i in text if i not in stopwords.words('english')]
+    text = [i for i in text if i not in stop_words]
+
+    # Apply stemming
     text = [ps.stem(i) for i in text]
 
     return " ".join(text)
