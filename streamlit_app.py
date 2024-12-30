@@ -6,9 +6,9 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
+import os
 
 # Set NLTK Data Path and Download Punkt Tokenizer
-import os
 nltk_data_dir = os.path.join(os.getcwd(), 'nltk_data')
 
 # Create the directory if it doesn't exist
@@ -18,13 +18,11 @@ if not os.path.exists(nltk_data_dir):
 # Add the directory to NLTK data path
 nltk.data.path.append(nltk_data_dir)
 
-# Download the 'punkt' tokenizer
+# Download the 'punkt' tokenizer (only if it's not already downloaded)
 nltk.download('punkt', download_dir=nltk_data_dir)
 
-# Your other code follows...
-# Download necessary NLTK datap
-
-nltk.download('stopwords')
+# Download stopwords (only if it's not already downloaded)
+nltk.download('stopwords', download_dir=nltk_data_dir)
 
 # Preprocessing function
 def transform_text(text):
@@ -32,6 +30,7 @@ def transform_text(text):
     text = text.lower()
     text = word_tokenize(text)
 
+    # Remove non-alphanumeric tokens and stopwords, then apply stemming
     text = [i for i in text if i.isalnum()]
     text = [i for i in text if i not in stopwords.words('english')]
     text = [ps.stem(i) for i in text]
