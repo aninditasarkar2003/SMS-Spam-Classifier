@@ -6,7 +6,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 
-# Download necessary NLTK data
+# Download necessary NLTK datap
 nltk.download('punkt')
 nltk.download('stopwords')
 
