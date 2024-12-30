@@ -2,23 +2,33 @@ import streamlit as st
 import pickle
 import string
 import nltk
+import os
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 
-# Download necessary NLTK datap
-nltk.download('punkt')
-nltk.download('stopwords')
+# Set the NLTK data path
+nltk_data_dir = os.path.join(os.getcwd(), 'nltk_data')
+
+# Create the directory if it doesn't exist
+if not os.path.exists(nltk_data_dir):
+    os.makedirs(nltk_data_dir)
+
+# Add the directory to NLTK data path
+nltk.data.path.append(nltk_data_dir)
+
+# Download the 'punkt' tokenizer
+nltk.download('punkt', download_dir=nltk_data_dir)
 
 # Preprocessing function
 def transform_text(text):
     ps = PorterStemmer()
     text = text.lower()
-    text = word_tokenize(text)
+    text = word_tokenize(text)  # Tokenize the text using 'punkt'
 
-    text = [i for i in text if i.isalnum()]
-    text = [i for i in text if i not in stopwords.words('english')]
-    text = [ps.stem(i) for i in text]
+    text = [i for i in text if i.isalnum()]  # Keep alphanumeric words
+    text = [i for i in text if i not in stopwords.words('english')]  # Remove stopwords
+    text = [ps.stem(i) for i in text]  # Apply stemming
 
     return " ".join(text)
 
