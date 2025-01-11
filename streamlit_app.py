@@ -1,18 +1,21 @@
 import streamlit as st
 import pickle
 import string
-import nltk
 from nltk.corpus import stopwords
+import nltk
 from nltk.stem.porter import PorterStemmer
 
-# Download NLTK resources
-nltk.download('stopwords')
-nltk.download('punkt')
+# Add the custom directory to NLTK's data path
+nltk.data.path.append(r'C:\Users\ANINDITA SARKAR\AppData\Roaming\nltk_data')
 
-# Initialize Porter Stemmer
+# Test the download by tokenizing a sample sentence (this is optional, just to test)
+sample_text = "Hello, this is a test sentence."
+tokens = nltk.word_tokenize(sample_text)
+print(tokens)  # You can see the tokenized words in the console
+
+# Initialize the stemmer
 ps = PorterStemmer()
 
-# Preprocessing Function
 def transform_text(text):
     text = text.lower()
     text = nltk.word_tokenize(text)
@@ -37,13 +40,9 @@ def transform_text(text):
 
     return " ".join(y)
 
-# Load pre-trained vectorizer and model
-try:
-    tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
-    model = pickle.load(open('model.pkl', 'rb'))
-except FileNotFoundError:
-    st.error("Model files not found! Please ensure 'vectorizer.pkl' and 'model.pkl' are in the correct directory.")
-    st.stop()
+# Load the TF-IDF vectorizer and model
+tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
+model = pickle.load(open('model.pkl', 'rb'))
 
 # Streamlit UI
 st.title("Email/SMS Spam Classifier")
@@ -51,17 +50,14 @@ st.title("Email/SMS Spam Classifier")
 input_sms = st.text_area("Enter the message")
 
 if st.button('Predict'):
-    if not input_sms.strip():
-        st.warning("Please enter a message to classify.")
+    # Preprocess the input
+    transformed_sms = transform_text(input_sms)
+    # Vectorize the transformed text
+    vector_input = tfidf.transform([transformed_sms])
+    # Predict the result
+    result = model.predict(vector_input)[0]
+    # Display the result
+    if result == 1:
+        st.header("Spam")
     else:
-        # 1. Preprocess
-        transformed_sms = transform_text(input_sms)
-        # 2. Vectorize
-        vector_input = tfidf.transform([transformed_sms])
-        # 3. Predict
-        result = model.predict(vector_input)[0]
-        # 4. Display
-        if result == 1:
-            st.header("Spam")
-        else:
-            st.header("Not Spam")
+        st.header("Not Spam")
