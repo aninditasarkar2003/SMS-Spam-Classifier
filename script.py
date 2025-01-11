@@ -1,11 +1,10 @@
 import nltk
 
-# Download 'punkt' resource if not already available
+# Download 'punkt' resource
 nltk.download('punkt')
 
 def transform_text(text):
     tokens = nltk.word_tokenize(text)
-    # Perform other transformations
     return tokens
 
 # Example usage
