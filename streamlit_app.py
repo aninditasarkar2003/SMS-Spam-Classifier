@@ -5,15 +5,10 @@ from nltk.corpus import stopwords
 import nltk
 from nltk.stem.porter import PorterStemmer
 
-# Add the custom directory to NLTK's data path
-nltk.data.path.append(r'C:\Users\ANINDITA SARKAR\AppData\Roaming\nltk_data')
+# Ensure punkt is downloaded
+nltk.download('punkt', download_dir='C:\Users\ANINDITA SARKAR\AppData\Roaming\nltk_data')
+nltk.data.path.append('C:\Users\ANINDITA SARKAR\AppData\Roaming\nltk_data')
 
-# Test the download by tokenizing a sample sentence (this is optional, just to test)
-sample_text = "Hello, this is a test sentence."
-tokens = nltk.word_tokenize(sample_text)
-print(tokens)  # You can see the tokenized words in the console
-
-# Initialize the stemmer
 ps = PorterStemmer()
 
 def transform_text(text):
@@ -40,23 +35,22 @@ def transform_text(text):
 
     return " ".join(y)
 
-# Load the TF-IDF vectorizer and model
-tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
-model = pickle.load(open('model.pkl', 'rb'))
+tfidf = pickle.load(open('vectorizer.pkl','rb'))
+model = pickle.load(open('model.pkl','rb'))
 
-# Streamlit UI
 st.title("Email/SMS Spam Classifier")
 
 input_sms = st.text_area("Enter the message")
 
 if st.button('Predict'):
-    # Preprocess the input
+
+    # 1. preprocess
     transformed_sms = transform_text(input_sms)
-    # Vectorize the transformed text
+    # 2. vectorize
     vector_input = tfidf.transform([transformed_sms])
-    # Predict the result
+    # 3. predict
     result = model.predict(vector_input)[0]
-    # Display the result
+    # 4. Display
     if result == 1:
         st.header("Spam")
     else:
