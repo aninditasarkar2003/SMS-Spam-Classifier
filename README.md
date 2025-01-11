@@ -1,4 +1,4 @@
-##Spam Message Classifier
+Spam Message Classifier
 This project is a spam message classifier built using natural language processing (NLP) and machine learning techniques. It aims to identify whether a given message is spam or not based on its content.
 
 Features
